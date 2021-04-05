@@ -89,7 +89,7 @@ exports.get_subgroups_of_group = (req, res) => {
 
   Group.find({parent: group_id})
   .then(subgroups => {
-    console.log(`[Mongoose] Subgroups of group ${group._id} queried`)
+    console.log(`[Mongoose] Subgroups of group ${group_id} queried`)
     res.send(subgroups)
   })
   .catch(error => {
