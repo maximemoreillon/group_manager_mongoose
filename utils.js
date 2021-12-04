@@ -1,7 +1,7 @@
 exports.error_handling = (error, res) => {
 
   if(error.code === 11000) {
-    console.log(`Duplicates not allowed`)
+    console.log(error)
     return res.status(400).send(`Duplicates not allowed`)
   }
 

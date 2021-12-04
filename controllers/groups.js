@@ -61,6 +61,8 @@ exports.get_group = async (req, res) => {
 
     const group = await Group.findOne({_id})
 
+    if(!group) throw {code: 404, message: `Group ${_id} no found`}
+
     res.send(group)
     console.log(`[Mongoose] Group ${group._id} queried`)
   }

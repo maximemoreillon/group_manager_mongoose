@@ -27,6 +27,9 @@ exports.add_member_to_group = async (req, res) => {
 
     const group = await Group.findById(_id)
 
+    const found_member = group.members.find( ({user_id: existing_user_id}) => existing_user_id === user_id)
+    if(found_member) throw {code: 400, message: `User already in group`}
+
     group.members.push({user_id})
 
     await group.save()
