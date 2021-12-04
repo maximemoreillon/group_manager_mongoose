@@ -1,7 +1,7 @@
 const express = require('express')
 const controller = require('../controllers/members.js')
 
-const router = express.Router()
+const router = express.Router({mergeParams: true})
 
 router.route('/')
   .get(controller.get_members_of_group)

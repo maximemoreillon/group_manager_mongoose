@@ -1,100 +1,96 @@
-
 const Group = require('../models/group.js')
+const {error_handling} = require('../utils.js')
 
-exports.create_group = (req, res) => {
+exports.create_group = async (req, res) => {
 
-  // Todo: use joy
-  const new_group = new Group(req.body)
+  try {
+    // Todo: add one as admin and member using a mongoose creation function
+    const {user} = res.locals
+    const properties = {
+      members: [   {user_id: user._id, admin: true} ],
+      creation_date: new Date(),
+      ...req.body,
+    }
+    const group = await Group.create(properties)
+    res.send(group)
+    console.log(`[Mongoose] Group ${group._id} created`)
+  }
+  catch (error) {
+    error_handling(error, res)
+  }
 
-  new_group.save()
-  .then((result) => {
-    console.log(`[Mongoose] New group inserted`)
+}
+
+exports.delete_group = async (req, res) => {
+
+  try {
+    const {_id} = req.params
+    if(!_id) return res.status(400).send(`Group ID not defined`)
+
+    const result = await Group.deleteOne({_id})
+
     res.send(result)
-  })
-  .catch(error => {
-    console.log(error)
-    res.status(500).send('Error')
-  })
-
+    console.log(`[Mongoose] Group ${_id} deleted`)
+  }
+  catch (error) {
+    error_handling(error, res)
+  }
 }
 
-exports.delete_group = (req, res) => {
-
-  const {group_id} = req.params
-  if(!group_id) return res.status(400).send(`Group ID not defined`)
-
-  Group.deleteOne({_id: group_id})
-  .then(() => {
-    console.log(`[Mongoose] Group ${group_id} deleted`)
-    res.send(`Group ${group_id} deleted`)
-  })
-  .catch(error => {
-    console.log(error)
-    res.status(500).send(error)
-  })
-
-}
-
-exports.update_group = (req, res) => {
+exports.update_group = async (req, res) => {
   res.send('Not implemented')
 }
 
-exports.get_group = (req, res) => {
+exports.get_group = async (req, res) => {
 
-  const {group_id} = req.params
-  if(!group_id) return res.status(400).send(`Group ID not defined`)
+  try {
+    const {_id} = req.params
+    if(!_id) return res.status(400).send(`Group ID not defined`)
 
-  Group.findById(group_id)
-  .then(group => {
-    console.log(`[Mongoose] Group ${group?._id} queried`)
+    const group = await Group.findById(_id)
+
     res.send(group)
-  })
-  .catch(error => {
-    console.log(error)
-    res.status(500).send(error)
-  })
+    console.log(`[Mongoose] Group ${group._id} queried`)
+  }
+  catch (error) {
+    error_handling(error, res)
+  }
 
 }
 
-exports.get_groups = (req, res) => {
-  Group.find({})
-  .then(groups => {
-    console.log(`[Mongoose] Groups queried`)
+exports.get_groups = async (req, res) => {
+
+  try {
+    const {top} = req.query
+
+    const query = {}
+    if(top) query.parent = { $exists: 0}
+
+    const groups = await Group.find(query)
+
     res.send(groups)
-  })
-  .catch(error => {
-    console.log(error)
-    res.status(500).send(error)
-  })
-}
-
-exports.get_groups_with_no_parent = (req, res) => {
-
-  Group.find({parent: { $exists: 0}})
-  .then(subgroups => {
-    console.log(`[Mongoose] Groups with no parent queried`)
-    res.send(subgroups)
-  })
-  .catch(error => {
-    console.log(error)
-    res.status(500).send(error)
-  })
+    console.log(`[Mongoose] Groups queried`)
+  }
+  catch (error) {
+    error_handling(error, res)
+  }
 
 }
 
-exports.get_subgroups_of_group = (req, res) => {
+exports.get_subgroups_of_group = async (req, res) => {
 
-  const {group_id} = req.params
-  if(!group_id) return res.status(400).send(`Group ID not defined`)
+  console.log('subgroups query')
 
-  Group.find({parent: group_id})
-  .then(subgroups => {
-    console.log(`[Mongoose] Subgroups of group ${group_id} queried`)
+  try {
+    const {_id} = req.params
+    if(!_id) return res.status(400).send(`Group ID not defined`)
+    const subgroups =  await Group.find({parent: _id})
     res.send(subgroups)
-  })
-  .catch(error => {
-    console.log(error)
-    res.status(500).send(error)
-  })
+    console.log(`[Mongoose] Subgroups of group ${_id} queried`)
+  }
+  catch (error) {
+    error_handling(error, res)
+  }
+
 
 }
