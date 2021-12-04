@@ -38,7 +38,19 @@ exports.delete_group = async (req, res) => {
 }
 
 exports.update_group = async (req, res) => {
-  res.send('Not implemented')
+  try {
+    const {_id} = req.params
+    if(!_id) return res.status(400).send(`Group ID not defined`)
+    const properties = req.body
+
+    const group = await Group.findOneAndUpdate({_id}, properties)
+
+    res.send(group)
+    console.log(`[Mongoose] Group ${group._id} updated`)
+  }
+  catch (error) {
+    error_handling(error, res)
+  }
 }
 
 exports.get_group = async (req, res) => {
@@ -47,7 +59,7 @@ exports.get_group = async (req, res) => {
     const {_id} = req.params
     if(!_id) return res.status(400).send(`Group ID not defined`)
 
-    const group = await Group.findById(_id)
+    const group = await Group.findOne({_id})
 
     res.send(group)
     console.log(`[Mongoose] Group ${group._id} queried`)
