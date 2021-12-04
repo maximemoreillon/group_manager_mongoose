@@ -8,7 +8,7 @@ Could think of having array of users with an 'Admin' property
 // TODO: prevent member duplicate
 const memberSchema = new Schema({
   user_id: {type: String},
-  admin: Boolean
+  admin: {type: Boolean, default: false}
 })
 
 
