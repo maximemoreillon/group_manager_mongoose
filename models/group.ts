@@ -1,12 +1,10 @@
-const {Schema, model} = require('mongoose')
-
+import { Schema, model } from "mongoose"
 
 // TODO: prevent member duplicate
 const memberSchema = new Schema({
-  user_id: {type: String},
-  admin: {type: Boolean, default: false}
+  user_id: { type: String },
+  admin: { type: Boolean, default: false },
 })
-
 
 const groupSchema = new Schema({
   name: String,
@@ -18,6 +16,4 @@ const groupSchema = new Schema({
   creation_date: Date,
 })
 
-const Group = model('Group', groupSchema)
-
-module.exports = Group
+export default model("Group", groupSchema)
