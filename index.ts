@@ -1,4 +1,5 @@
 import express from "express"
+import "express-async-errors"
 import cors from "cors"
 import dotenv from "dotenv"
 import groups_router from "./routes/groups"
@@ -38,5 +39,5 @@ app.use(auth(auth_options))
 app.use("/groups", groups_router)
 
 app.listen(EXPRESS_PORT, () => {
-  console.log(`Group manager listening on port ${EXPRESS_PORT}`)
+  console.log(`[Express] listening on port ${EXPRESS_PORT}`)
 })
